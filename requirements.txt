@@ -3,3 +3,7 @@ geopandas
 random
 unidecode
 duckdb
+folium
+folium.plugins
+streamlit
+streamlit_folium
