@@ -149,6 +149,6 @@ def exec(admin_level):
     dist_boundaries = ward_boundaries[[col for col in ward_boundaries.columns if "ward" not in col and "area" not in col]]
     dist_boundaries = dist_boundaries.dissolve(by=["country","city","district","dist_id","city_org","district_org","dist_en"], as_index=False)
     # Measure area size to later calculate population density
-    dist_boundaries = dist_boundaries(ward_boundaries)
+    dist_boundaries = measure_area(dist_boundaries)
 
     return ward_boundaries if admin_level=="ward" else dist_boundaries
