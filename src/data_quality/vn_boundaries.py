@@ -105,6 +105,13 @@ def read_shp(filepath, cols, newcols):
     df["ward_en"] = df["ward_en"].apply(lambda x: x.replace("Ward","Phuong").lower().replace(" ",""))
     return df
 
+def measure_area(df):
+    # convert CRS to equal-area projection -> the length unit is now `meter`
+    df = df.df(epsg=6933)
+    df["area_sqm"] = df.area.values #/10e6 for sqKm
+    df = df.to_crs(epsg=4326)
+    return df
+
 def get_representative_loc(df, admin_level):
     df_admin = df[[admin_level,"geometry"]].dissolve(by=admin_level, as_index=False)
     df_admin["city_centroid"] = df_admin.representative_point()
@@ -133,9 +140,15 @@ def exec(admin_level):
     # Append modified HCMC boundaries to GADM
     ward_boundaries = pd.concat([gadm_boundaries[gadm_boundaries.city!="HồChíMinh"], hcmc_boundaries])
     ward_boundaries = gpd.GeoDataFrame(ward_boundaries.drop(["cityscope_id"], axis=1))
+
+    # Measure area size to later calculate population density
+    ward_boundaries = measure_area(ward_boundaries)
+    # Get city central point to navigate map easily
     ward_boundaries = get_representative_loc(ward_boundaries, "city")
     
-    dist_boundaries = ward_boundaries[[col for col in ward_boundaries.columns if "ward" not in col]]
+    dist_boundaries = ward_boundaries[[col for col in ward_boundaries.columns if "ward" not in col and "area" not in col]]
     dist_boundaries = dist_boundaries.dissolve(by=["country","city","district","dist_id","city_org","district_org","dist_en"], as_index=False)
+    # Measure area size to later calculate population density
+    dist_boundaries = dist_boundaries(ward_boundaries)
 
     return ward_boundaries if admin_level=="ward" else dist_boundaries
