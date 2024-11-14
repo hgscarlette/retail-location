@@ -60,7 +60,7 @@ def adminkeys_to_match(df, cols_to_fix):
         df["ward_en"] = df["ward"].apply(lambda x: unidecode(x).lower())
         # Some ward just has title&number, thus need to insert the title "Phường" back to these wards
         df["ward"] = df["ward"].apply(lambda x: "Phường"+str(int(x)) if x.isnumeric() else 
-                                               ("Phường"+str(int(x)) if x.upper()==x and len(df.ward[i]) < 4  ##phườngIV
+                                               ("Phường"+x if x.upper()==x and len(x) < 4  ##phườngIV
                                                 else x))
         dup_ward = df.groupby(["city","district","ward"])["ward_id"].transform('nunique').gt(1)
         df.loc[dup_ward,"ward"] = df.loc[dup_ward,"ward_org"].apply(lambda x: x.replace(" ",""))
