@@ -107,7 +107,7 @@ def read_shp(filepath, cols, newcols):
 
 def measure_area(df):
     # convert CRS to equal-area projection -> the length unit is now `meter`
-    df = df.df(epsg=6933)
+    df = df.to_crs(epsg=6933)
     df["area_sqm"] = df.area.values #/10e6 for sqKm
     df = df.to_crs(epsg=4326)
     return df
