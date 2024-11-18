@@ -1,11 +1,11 @@
 import pandas as pd
+from unidecode import unidecode
 
 """
 Source of population data: http://portal.thongke.gov.vn/khodulieudanso2019/Default.aspx
+Note: the administrative may not be updated as in 2019, for example, Thị xã Đồng Xoài was already
+upgraded to a city in 10/2018 but the population data still keeps it as Thị xã Đồng Xoài
 """
-
-import pandas as pd
-from unidecode import unidecode
 
 def read_excel_pivot(path, row_to_skip, row_header, cols_remove_agg, row_agg):
     df = pd.read_excel(path, skiprows=row_to_skip, header=row_header)
